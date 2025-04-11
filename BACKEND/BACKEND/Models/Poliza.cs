@@ -6,17 +6,22 @@ namespace BACKEND.Models
     public class Poliza
     {
         [Key]
-        public int NumeroPoliza { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string NumeroPoliza { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string TipoPoliza { get; set; }
+        public int TipoPolizaId { get; set; }
+
+        [ForeignKey("TipoPolizaId")]
+        public TipoPoliza TipoPoliza { get; set; }
 
         [Required]
+        [MaxLength(20)]
         public string CedulaAsegurado { get; set; }
 
         [ForeignKey("CedulaAsegurado")]
-        public Cliente Asegurado { get; set; }
+        public Cliente Cliente { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
@@ -24,18 +29,26 @@ namespace BACKEND.Models
         public DateTime FechaVencimiento { get; set; }
         public DateTime FechaEmision { get; set; }
 
-        [MaxLength(50)]
-        public string Coberturas { get; set; }
-        [MaxLength(50)]
-        public string EstadoPoliza { get; set; }
+        [Required]
+        public int CoberturaId { get; set; }
+
+        [ForeignKey("CoberturaId")]
+        public Cobertura Cobertura { get; set; }
+
+        [Required]
+        public int EstadoPolizaId { get; set; }
+
+        [ForeignKey("EstadoPolizaId")]
+        public EstadoPoliza EstadoPoliza { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Prima { get; set; }
         public DateTime Periodo { get; set; }
         public DateTime FechaInclusion { get; set; }
 
-        [MaxLength(100)]
+        [Required]
         public string Aseguradora { get; set; }
+
     }
 
 }

@@ -1,7 +1,5 @@
 ﻿using BACKEND.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace BACKEND.Data
 {
@@ -17,30 +15,50 @@ namespace BACKEND.Data
         //CONEXION A LOS DATOS DE PRUEBA PARA LISTAS DESPEGABLES
         public DbSet<TipoPoliza> TipoPolizas { get; set; }
         public DbSet<EstadoPoliza> EstadoPolizas { get; set; }
-        public DbSet<Aseguradora> Aseguradoras { get; set; }
+        public DbSet<Cobertura> Coberturas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //RELACIONES DE POLIZAS CON CLIENTE
-            modelBuilder.Entity<Cliente>()
-                .HasMany(c => c.Polizas)
-                .WithOne(p => p.Asegurado)
+            modelBuilder.Entity<Poliza>()
+                .HasOne(p => p.Cliente)
+                .WithMany()
                 .HasForeignKey(p => p.CedulaAsegurado)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //RELACIONES DE POLIZA CON ASEGURADORA
+            modelBuilder.Entity<Poliza>()
+                .HasOne(p => p.Cobertura)
+                .WithMany()
+                .HasForeignKey(p => p.CoberturaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //RELACIONES DE POLIZA CON TIPO_POLIZA
+            modelBuilder.Entity<Poliza>()
+                .HasOne(p => p.TipoPoliza)
+                .WithMany()
+                .HasForeignKey(p => p.TipoPolizaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //RELACIONES DE POLIZA CON ESTADO_POLIZA
+            modelBuilder.Entity<Poliza>()
+                .HasOne(p => p.EstadoPoliza)
+                .WithMany()
+                .HasForeignKey(p => p.EstadoPolizaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //INSERT DATOS DE PRUEBA
             //SE TOMA EN BASE AL PUNTO 
             //4.Los datos de prueba deben ser generados por el analista
             modelBuilder.Entity<TipoPoliza>().HasData(
-                new TipoPoliza { Id = 1, Nombre = "Vida" },
-                new TipoPoliza { Id = 2, Nombre = "Familiar" },
-                new TipoPoliza { Id = 3, Nombre = "Vehículo" }
+                new TipoPoliza { Id = 1, Nombre = "Vivienda" },
+                new TipoPoliza { Id = 2, Nombre = "Vehículo" }
              );
 
-            modelBuilder.Entity<Aseguradora>().HasData(
-                new Aseguradora { Id = 1, Nombre = "INS" },
-                new Aseguradora { Id = 2, Nombre = "CSS" },
-                new Aseguradora { Id = 3, Nombre = "Popular seguros" }
+            modelBuilder.Entity<Cobertura>().HasData(
+                new Cobertura { Id = 1, Nombre = "Robo" },
+                new Cobertura { Id = 2, Nombre = "Accidente" },
+                new Cobertura { Id = 3, Nombre = "Daños por desastre natural" }
              );
 
             modelBuilder.Entity<EstadoPoliza>().HasData(
@@ -48,6 +66,54 @@ namespace BACKEND.Data
                 new EstadoPoliza { Id = 2, Nombre = "Vencida" },
                 new EstadoPoliza { Id = 3, Nombre = "Cancelada" }
              );
+
+            modelBuilder.Entity<Cliente>().HasData(
+               new Cliente
+               {
+                   Cedula = "402321325",
+                   Nombre = "Juan",
+                   PrimerApellido = "Pérez",
+                   SegundoApellido = "Ramírez",
+                   TipoPersona = "Física",
+                   FechaNacimiento = new DateTime(1990, 5, 21)
+               },
+               new Cliente
+               {
+                   Cedula = "402321327",
+                   Nombre = "María",
+                   PrimerApellido = "Gómez",
+                   SegundoApellido = "Torres",
+                   TipoPersona = "Física",
+                   FechaNacimiento = new DateTime(1985, 3, 14)
+               },
+               new Cliente
+               {
+                   Cedula = "402321321",
+                   Nombre = "Carlos",
+                   PrimerApellido = "Hernández",
+                   SegundoApellido = "Vargas",
+                   TipoPersona = "Física",
+                   FechaNacimiento = new DateTime(1992, 11, 2)
+               },
+               new Cliente
+               {
+                   Cedula = "402321322",
+                   Nombre = "Ana",
+                   PrimerApellido = "Morales",
+                   SegundoApellido = "Lopez",
+                   TipoPersona = "Física",
+                   FechaNacimiento = new DateTime(1998, 7, 9)
+               },
+               new Cliente
+               {
+                   Cedula = "402321323",
+                   Nombre = "Luis",
+                   PrimerApellido = "Martínez",
+                   SegundoApellido = "Soto",
+                   TipoPersona = "Física",
+                   FechaNacimiento = new DateTime(1980, 1, 30)
+               }
+            );
         }
     }
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BACKEND.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250410234032_IniciarDB")]
-    partial class IniciarDB
+    [Migration("20250411184038_iniciarDB")]
+    partial class iniciarDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace BACKEND.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BACKEND.Models.Aseguradora", b =>
+            modelBuilder.Entity("BACKEND.Models.Cobertura", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,23 +40,23 @@ namespace BACKEND.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Aseguradoras");
+                    b.ToTable("Coberturas");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Nombre = "INS"
+                            Nombre = "Robo"
                         },
                         new
                         {
                             Id = 2,
-                            Nombre = "CSS"
+                            Nombre = "Accidente"
                         },
                         new
                         {
                             Id = 3,
-                            Nombre = "Popular seguros"
+                            Nombre = "Daños por desastre natural"
                         });
                 });
 
@@ -97,30 +97,22 @@ namespace BACKEND.Migrations
 
             modelBuilder.Entity("BACKEND.Models.Poliza", b =>
                 {
-                    b.Property<int>("NumeroPoliza")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NumeroPoliza"));
+                    b.Property<string>("NumeroPoliza")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Aseguradora")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CedulaAsegurado")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Coberturas")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("CoberturaId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("EstadoPoliza")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("EstadoPolizaId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
@@ -140,14 +132,18 @@ namespace BACKEND.Migrations
                     b.Property<decimal>("Prima")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TipoPoliza")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("TipoPolizaId")
+                        .HasColumnType("int");
 
                     b.HasKey("NumeroPoliza");
 
                     b.HasIndex("CedulaAsegurado");
+
+                    b.HasIndex("CoberturaId");
+
+                    b.HasIndex("EstadoPolizaId");
+
+                    b.HasIndex("TipoPolizaId");
 
                     b.ToTable("Polizas");
                 });
@@ -173,16 +169,11 @@ namespace BACKEND.Migrations
                         new
                         {
                             Id = 1,
-                            Nombre = "Vida"
+                            Nombre = "Vivienda"
                         },
                         new
                         {
                             Id = 2,
-                            Nombre = "Familiar"
-                        },
-                        new
-                        {
-                            Id = 3,
                             Nombre = "Vehículo"
                         });
                 });
@@ -218,22 +209,88 @@ namespace BACKEND.Migrations
                     b.HasKey("Cedula");
 
                     b.ToTable("Clientes");
+
+                    b.HasData(
+                        new
+                        {
+                            Cedula = "402321325",
+                            FechaNacimiento = new DateTime(1990, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Juan",
+                            PrimerApellido = "Pérez",
+                            SegundoApellido = "Ramírez",
+                            TipoPersona = "Física"
+                        },
+                        new
+                        {
+                            Cedula = "402321327",
+                            FechaNacimiento = new DateTime(1985, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "María",
+                            PrimerApellido = "Gómez",
+                            SegundoApellido = "Torres",
+                            TipoPersona = "Física"
+                        },
+                        new
+                        {
+                            Cedula = "402321321",
+                            FechaNacimiento = new DateTime(1992, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Carlos",
+                            PrimerApellido = "Hernández",
+                            SegundoApellido = "Vargas",
+                            TipoPersona = "Física"
+                        },
+                        new
+                        {
+                            Cedula = "402321322",
+                            FechaNacimiento = new DateTime(1998, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Ana",
+                            PrimerApellido = "Morales",
+                            SegundoApellido = "Lopez",
+                            TipoPersona = "Física"
+                        },
+                        new
+                        {
+                            Cedula = "402321323",
+                            FechaNacimiento = new DateTime(1980, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Luis",
+                            PrimerApellido = "Martínez",
+                            SegundoApellido = "Soto",
+                            TipoPersona = "Física"
+                        });
                 });
 
             modelBuilder.Entity("BACKEND.Models.Poliza", b =>
                 {
-                    b.HasOne("Cliente", "Asegurado")
-                        .WithMany("Polizas")
+                    b.HasOne("Cliente", "Cliente")
+                        .WithMany()
                         .HasForeignKey("CedulaAsegurado")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Asegurado");
-                });
+                    b.HasOne("BACKEND.Models.Cobertura", "Cobertura")
+                        .WithMany()
+                        .HasForeignKey("CoberturaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            modelBuilder.Entity("Cliente", b =>
-                {
-                    b.Navigation("Polizas");
+                    b.HasOne("BACKEND.Models.EstadoPoliza", "EstadoPoliza")
+                        .WithMany()
+                        .HasForeignKey("EstadoPolizaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BACKEND.Models.TipoPoliza", "TipoPoliza")
+                        .WithMany()
+                        .HasForeignKey("TipoPolizaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Cobertura");
+
+                    b.Navigation("EstadoPoliza");
+
+                    b.Navigation("TipoPoliza");
                 });
 #pragma warning restore 612, 618
         }

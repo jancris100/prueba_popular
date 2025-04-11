@@ -2,12 +2,13 @@
 
 namespace BACKEND.Models
 {
-    public class Aseguradora
+    public class Cobertura
     {
         [Key]
         public int Id { get; set; }
 
         [MaxLength(100)]
+        [Required]
         public string Nombre { get; set; }
     }
 }

@@ -23,6 +23,4 @@ public class Cliente
     public string TipoPersona { get; set; }
 
     public DateTime FechaNacimiento { get; set; }
-
-    public ICollection<Poliza> Polizas { get; set; }
 }

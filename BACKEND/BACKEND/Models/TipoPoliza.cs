@@ -8,6 +8,7 @@ namespace BACKEND.Models
         public int Id { get; set; }
 
         [MaxLength(100)]
+        [Required]
         public string Nombre { get; set; }
     }
 }
