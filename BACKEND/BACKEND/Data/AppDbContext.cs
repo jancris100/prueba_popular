@@ -16,6 +16,7 @@ namespace BACKEND.Data
         public DbSet<TipoPoliza> TipoPolizas { get; set; }
         public DbSet<EstadoPoliza> EstadoPolizas { get; set; }
         public DbSet<Cobertura> Coberturas { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -114,6 +115,24 @@ namespace BACKEND.Data
                    FechaNacimiento = new DateTime(1980, 1, 30)
                }
             );
+            modelBuilder.Entity<User>().HasData(
+               new User
+               {
+                   Id = 1,
+                   UserName = "adminUser",
+                   Password = "adminPassword",
+                   Email = "admin@gmmail.com",
+                   Role = "Admin"
+               },
+               new User
+               {
+                   Id = 2,
+                   UserName = "regularUser",
+                   Password = "userPassword",
+                   Email = "admin@outlock.com",
+                   Role = "User"
+               }
+    );
         }
     }
 
