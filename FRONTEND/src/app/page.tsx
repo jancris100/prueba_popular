@@ -16,7 +16,13 @@ const Page: React.FC = () => {
     return <div className="text-center mt-5">Cargando...</div>;
   }
 
-  return isAuthenticated ? <Polizas /> : <Login />;
+  return isAuthenticated ? (
+    <>
+      <Polizas />
+    </>
+  ) : (
+    <Login />
+  );
 };
 
 export default Page;

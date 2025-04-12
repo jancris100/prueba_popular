@@ -8,7 +8,7 @@ const CrearPolizaPage = () => {
   return (
     <>
       <div className="container mt-4">
-        <h2 className="mb-4">Crear Nueva Póliza</h2>
+        <h2 style={{ color: '#F57921' }} className="mb-4">Crear Nueva Póliza</h2>
         <CrearPolizaForm />
       </div>
     </>

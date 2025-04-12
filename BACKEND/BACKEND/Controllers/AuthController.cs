@@ -28,7 +28,7 @@ namespace BACKEND.Controllers
                 return Unauthorized("Nombre de usuario o contraseña incorrectos.");
             }
 
-            if (user.Role != "admin")
+            if (user.Role != "Admin")
             {
                 return Unauthorized("El usuario no tiene permisos para acceder al sistema.");
             }

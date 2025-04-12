@@ -16,6 +16,22 @@ export interface Poliza {
   estadoPoliza?: EstadoPoliza;
 }
 
+export interface crearPoliza {
+  numeroPoliza: string;
+  tipoPolizaId: string;
+  cedulaAsegurado: string;
+  montoAsegurado: string;
+  fechaVencimiento: string;
+  fechaEmision: string;
+  coberturaId: string;
+  estadoPolizaId: string;
+  prima: string;
+  periodo: string;
+  fechaInclusion: string;
+  aseguradora: string;
+}
+
+
 export interface TipoPoliza {
   id: number;
   nombre: string;
@@ -29,4 +45,11 @@ export interface Cobertura {
 export interface EstadoPoliza {
   id: number;
   nombre: string;
+}
+
+export interface PolizaFormProps {
+  form: Poliza;
+  setForm: React.Dispatch<React.SetStateAction<Poliza>>;
+  handleSubmit: (e: React.FormEvent) => Promise<void>; 
+  modo: 'crear' | 'editar'; 
 }

@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { polizaService } from '@/Services/polizaService';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { NumericFormat } from 'react-number-format';
 
 type FormControlElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -26,6 +29,9 @@ const PolizaForm: React.FC = () => {
   const [coberturas, setCoberturas] = useState([]);
   const [estadosPoliza, setEstadosPoliza] = useState([]);
   const [numeroPoliza, setNumeroPoliza] = useState("POL-2025-");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const router = useRouter();
 
   const fetchData = async () => {
     try {
@@ -66,20 +72,59 @@ const PolizaForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulario enviado con los siguientes datos:', form);
+    setErrorMessage('');  // Limpiar mensaje de error previo
+    setSuccessMessage(''); // Limpiar mensaje de éxito previo
+
+    try {
+      await polizaService.createPoliza(form);
+      setSuccessMessage('¡Póliza creada con éxito!');
+      setForm({
+        numeroPoliza: '',
+        tipoPolizaId: '',
+        cedulaAsegurado: '',
+        montoAsegurado: '',
+        fechaVencimiento: '',
+        fechaEmision: '',
+        coberturaId: '',
+        estadoPolizaId: '',
+        prima: '',
+        periodo: '',
+        fechaInclusion: '',
+        aseguradora: ''
+      }); // Limpiar formulario después de un submit exitoso
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(`Error al crear la póliza: ${error.response?.data?.message || error.message}`);
+      } else {
+        setErrorMessage('Error desconocido al crear la póliza');
+      }
+    }
   };
 
   const handleNumeroPolizaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (value.startsWith("POL-2025-")) {
       setNumeroPoliza(value);
+      setForm((prevState) => ({
+        ...prevState,
+        numeroPoliza: value,
+      }));
     }
   };
 
   return (
     <div className="container mt-4">
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+      <button
+        className="btn text-white"
+        style={{ backgroundColor: '#F57921' }}
+        onClick={() => router.push('/')}
+      >
+        Volver
+      </button>
       <Form onSubmit={handleSubmit}>
         <Row className="mb-3">
           {/* Número de Póliza y Tipo de Póliza */}
@@ -135,14 +180,21 @@ const PolizaForm: React.FC = () => {
           <Col md={6}>
             <Form.Group controlId="montoAsegurado">
               <Form.Label>Monto Asegurado</Form.Label>
-              <Form.Control
-                type="number"
+              <NumericFormat
+                thousandSeparator=","
+                prefix="₡"
+                allowNegative={false}
                 name="montoAsegurado"
                 value={form.montoAsegurado}
-                onChange={handleChange}
+                onValueChange={(values) => {
+                  const { value } = values;
+                  setForm((prev) => ({ ...prev, montoAsegurado: value }));
+                }}
+                customInput={Form.Control}
                 required
               />
             </Form.Group>
+
           </Col>
         </Row>
 
@@ -225,14 +277,21 @@ const PolizaForm: React.FC = () => {
           <Col md={6}>
             <Form.Group controlId="prima">
               <Form.Label>Prima</Form.Label>
-              <Form.Control
-                type="number"
+              <NumericFormat
+                thousandSeparator=","
+                prefix="₡"
+                allowNegative={false}
                 name="prima"
                 value={form.prima}
-                onChange={handleChange}
+                onValueChange={(values) => {
+                  const { value } = values;
+                  setForm((prev) => ({ ...prev, prima: value }));
+                }}
+                customInput={Form.Control}
                 required
               />
             </Form.Group>
+
           </Col>
 
           <Col md={6}>
@@ -277,9 +336,8 @@ const PolizaForm: React.FC = () => {
             </Form.Group>
           </Col>
         </Row>
-
         {/* Botón de Enviar */}
-        <Button type="submit" className="mt-3">Enviar</Button>
+        <Button type="submit" className="mt-3" style={{ backgroundColor: '#F57921' }}>Enviar</Button>
       </Form>
     </div>
   );

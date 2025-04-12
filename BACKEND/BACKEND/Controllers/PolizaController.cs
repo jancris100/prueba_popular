@@ -54,6 +54,54 @@ namespace BACKEND.Controllers
 
             return Ok(poliza);
         }
+        //RUTA GET PARA BUSCAR
+        //buscar/Poliza/{id}
+        [HttpGet("Buscar")]
+        public async Task<ActionResult<IEnumerable<Poliza>>> BuscarPolizas(
+            [FromQuery] string? numeroPoliza,
+            [FromQuery] int? tipoPolizaId,
+            [FromQuery] string? cedulaAsegurado,
+            [FromQuery] string? nombreAsegurado,
+            [FromQuery] string? apellidosAsegurado,
+            [FromQuery] DateTime? fechaVencimientoInicio,
+            [FromQuery] DateTime? fechaVencimientoFin)
+        {
+            // Inicializar query con await para incluir relaciones
+            IQueryable<Poliza> query = _context.Polizas
+                .Include(p => p.TipoPoliza)
+                .Include(p => p.Cobertura)
+                .Include(p => p.Cliente)
+                .Include(p => p.EstadoPoliza)
+                .AsQueryable();
+
+            // Aplicar filtros
+            if (!string.IsNullOrEmpty(numeroPoliza))
+                query = query.Where(p => p.NumeroPoliza.Contains(numeroPoliza));
+
+            if (tipoPolizaId.HasValue)
+                query = query.Where(p => p.TipoPolizaId == tipoPolizaId);
+
+            if (!string.IsNullOrEmpty(cedulaAsegurado))
+                query = query.Where(p => p.CedulaAsegurado.Contains(cedulaAsegurado));
+
+            if (!string.IsNullOrEmpty(nombreAsegurado))
+                query = query.Where(p => p.Cliente.Nombre.Contains(nombreAsegurado));
+
+            if (!string.IsNullOrEmpty(apellidosAsegurado))
+                query = query.Where(p => p.Cliente.PrimerApellido.Contains(apellidosAsegurado));
+
+            if (fechaVencimientoInicio.HasValue && fechaVencimientoFin.HasValue)
+                query = query.Where(p => p.FechaVencimiento >= fechaVencimientoInicio
+                                      && p.FechaVencimiento <= fechaVencimientoFin);
+
+            // Ejecutar query con await
+            List<Poliza> resultados = await query.ToListAsync();
+
+            if (!resultados.Any())
+                return NotFound("No se encontraron pólizas");
+
+            return Ok(resultados);
+        }
 
         //RUTA POST 
         //api/Poliza
@@ -64,7 +112,7 @@ namespace BACKEND.Controllers
             var clienteExiste = await _context.Clientes.AnyAsync(c => c.Cedula == polizaDto.CedulaAsegurado);
             if (!clienteExiste)
             {
-                return BadRequest($"No se encontró un cliente con la cédula {polizaDto.CedulaAsegurado}. Primero debe registrarlo.");
+                return BadRequest(new { message = $"No se encontró un cliente con la cédula {polizaDto.CedulaAsegurado}. Primero debe registrarlo." });
             }
             //GUARDAMOS POLIZA CON RESPECTO AL DTO CREADO
             //MAPEAMOS LAS VARIABLES PARA PROCEDER
@@ -136,7 +184,7 @@ namespace BACKEND.Controllers
         //RUTA DELETE
         //api/Poliza/{numeroPoliza}
         [HttpDelete("{numeroPoliza}")]
-        public async Task<IActionResult> DeleteCliente(int numeroPoliza)
+        public async Task<IActionResult> DeleteCliente(string numeroPoliza)
         {
             var poliza = await _context.Polizas.FindAsync(numeroPoliza);
             if (poliza == null)
