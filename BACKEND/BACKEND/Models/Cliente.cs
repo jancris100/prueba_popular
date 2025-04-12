@@ -5,6 +5,7 @@ public class Cliente
 {
     [Key]
     [Required]
+    [MaxLength(20)]
     public string Cedula { get; set; }
 
     [Required]
