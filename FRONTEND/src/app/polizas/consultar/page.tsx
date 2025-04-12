@@ -25,18 +25,10 @@ const ConsultaPolizaPage = () => {
     const [tiposPoliza, setTiposPoliza] = useState([]);
     const [error, setError] = useState<string | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
 
-        const auth = localStorage.getItem('isAuthenticated');
-        setIsAuthenticated(auth === 'true');
-
-        if (auth === 'true') {
-            console.log("Aaaaaaaaaaaa");
-            router.push('/');
-        }
-
+    
         const cargarTiposPoliza = async () => {
             try {
                 const data = await polizaService.getTiposPoliza();
