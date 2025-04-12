@@ -132,7 +132,7 @@ namespace BACKEND.Data
                    Email = "admin@outlock.com",
                    Role = "User"
                }
-    );
+            );
         }
     }
 

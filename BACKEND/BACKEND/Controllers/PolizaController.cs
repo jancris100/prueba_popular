@@ -66,7 +66,6 @@ namespace BACKEND.Controllers
             [FromQuery] DateTime? fechaVencimientoInicio,
             [FromQuery] DateTime? fechaVencimientoFin)
         {
-            // Inicializar query con await para incluir relaciones
             IQueryable<Poliza> query = _context.Polizas
                 .Include(p => p.TipoPoliza)
                 .Include(p => p.Cobertura)
@@ -74,7 +73,7 @@ namespace BACKEND.Controllers
                 .Include(p => p.EstadoPoliza)
                 .AsQueryable();
 
-            // Aplicar filtros
+            //FILTROS 
             if (!string.IsNullOrEmpty(numeroPoliza))
                 query = query.Where(p => p.NumeroPoliza.Contains(numeroPoliza));
 
@@ -94,7 +93,7 @@ namespace BACKEND.Controllers
                 query = query.Where(p => p.FechaVencimiento >= fechaVencimientoInicio
                                       && p.FechaVencimiento <= fechaVencimientoFin);
 
-            // Ejecutar query con await
+  
             List<Poliza> resultados = await query.ToListAsync();
 
             if (!resultados.Any())
