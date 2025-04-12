@@ -1,5 +1,4 @@
 # prueba_popular
-
 -- 1.¿Qué es una arquitectura de microservicio y como se diferencia de una arquitectura monolítica?
 R/ Microservicios es basicamente un sistema donde todo va separado por ejemplo el backend con cada servicio que tiene para que trabajen sin necesidad del otro asi si se cae uno sigue funcionando y monolito es un sistema basico donde todo va en conjunto si se cae algo todo el sistema se cae.
 
@@ -27,11 +26,11 @@ NEXT_PUBLIC_API_URL=https://localhost:7104, con el url del Backend
 # Los usuarios ya se crean 
 -- Hay dos usuarios 
 -- Con permisos 
-UserName = "adminUser",
-Password = "adminPassword",
+  UserName = "adminUser",
+  Password = "adminPassword",
 -- Sin permisos 
-UserName = "regularUser",
-Password = "userPassword",
+   UserName = "regularUser",
+   Password = "userPassword",
 -- Para validar el login
 
 -- Los clientes ya se crean para crear polizas se necesitan las cedulas correctas si no hay mensaje de error
