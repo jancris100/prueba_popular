@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { polizaService } from '@/Services/polizaService';
-import { FaTrash, FaEdit, FaPlus } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaPlus, FaSearch } from 'react-icons/fa';
 import { Poliza } from '@/Interfaces/Polizas';
 
 const Polizas: React.FC = () => {
@@ -63,7 +63,8 @@ const Polizas: React.FC = () => {
           style={{ backgroundColor: '#F57921' }}
           onClick={() => router.push('/polizas/consultar')}
         >
-          <FaPlus /> Consultar poliza
+          <FaSearch />
+          Consultar póliza
         </button>
       </div>
 
@@ -118,7 +119,7 @@ const Polizas: React.FC = () => {
                 <td>{p.cobertura?.nombre ?? 'Sin datos'}</td>
                 <td>{p.estadoPoliza?.nombre ?? 'Sin datos'}</td>
                 <td className="text-center">
-                   <button
+                  <button
                     className="btn btn-sm btn-warning me-2"
                     onClick={() => router.push(`/polizas/editar/${p.numeroPoliza}`)}
                     title="Editar"
